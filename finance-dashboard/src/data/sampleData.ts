@@ -64,3 +64,102 @@ export const totalExpenses = Math.abs(
 );
 
 export const netSavings = totalIncome - totalExpenses;
+
+export interface BudgetItem {
+  category: string;
+  limit: number;
+  spent: number;
+  color: string;
+}
+
+export const budgets: BudgetItem[] = categorySpending.map((cat) => ({
+  category: cat.name,
+  limit: Math.ceil(cat.value * 1.3 / 10) * 10,
+  spent: cat.value,
+  color: cat.color,
+}));
+
+export interface RecurringExpense {
+  id: number;
+  description: string;
+  category: string;
+  monthlyCost: number;
+}
+
+export const recurringExpenses: RecurringExpense[] = transactions
+  .filter((t) =>
+    t.amount < 0 &&
+    ['Netflix Subscription', 'Spotify Premium', 'Gym Membership'].includes(t.description)
+  )
+  .map((t, i) => ({
+    id: i + 1,
+    description: t.description,
+    category: t.category,
+    monthlyCost: Math.abs(t.amount),
+  }));
+
+export const totalRecurringMonthly = recurringExpenses.reduce(
+  (sum, e) => sum + e.monthlyCost,
+  0
+);
+
+export const totalRecurringAnnual = totalRecurringMonthly * 12;
+
+export interface MonthlyCategory {
+  month: string;
+  category: string;
+  amount: number;
+}
+
+export const monthlyCategorySpending: MonthlyCategory[] = [
+  { month: 'May', category: 'Housing', amount: 1800 },
+  { month: 'May', category: 'Groceries', amount: 145 },
+  { month: 'May', category: 'Transportation', amount: 85 },
+  { month: 'May', category: 'Utilities', amount: 165 },
+  { month: 'May', category: 'Entertainment', amount: 32 },
+  { month: 'May', category: 'Dining', amount: 28 },
+  { month: 'May', category: 'Shopping', amount: 195 },
+  { month: 'May', category: 'Health', amount: 50 },
+  { month: 'Jun', category: 'Housing', amount: 1800 },
+  { month: 'Jun', category: 'Groceries', amount: 127 },
+  { month: 'Jun', category: 'Transportation', amount: 71 },
+  { month: 'Jun', category: 'Utilities', amount: 181 },
+  { month: 'Jun', category: 'Entertainment', amount: 26 },
+  { month: 'Jun', category: 'Dining', amount: 19 },
+  { month: 'Jun', category: 'Shopping', amount: 157 },
+  { month: 'Jun', category: 'Health', amount: 50 },
+];
+
+export interface CategoryInsight {
+  category: string;
+  currentAmount: number;
+  previousAmount: number;
+  change: number;
+  changePercent: number;
+  color: string;
+}
+
+export const categoryInsights: CategoryInsight[] = categorySpending
+  .map((cat) => {
+    const current = monthlyCategorySpending.find(
+      (m) => m.month === 'Jun' && m.category === cat.name
+    );
+    const previous = monthlyCategorySpending.find(
+      (m) => m.month === 'May' && m.category === cat.name
+    );
+    const currentAmount = current?.amount ?? 0;
+    const previousAmount = previous?.amount ?? 0;
+    const change = currentAmount - previousAmount;
+    const changePercent =
+      previousAmount > 0 ? (change / previousAmount) * 100 : 0;
+    return {
+      category: cat.name,
+      currentAmount,
+      previousAmount,
+      change,
+      changePercent,
+      color: cat.color,
+    };
+  })
+  .sort((a, b) => b.currentAmount - a.currentAmount)
+  .slice(0, 3);

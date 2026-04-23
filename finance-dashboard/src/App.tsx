@@ -1,6 +1,9 @@
 import SummaryBar from './components/SummaryBar';
 import SpendingPieChart from './components/SpendingPieChart';
 import SpendingLineChart from './components/SpendingLineChart';
+import BudgetTracker from './components/BudgetTracker';
+import RecurringExpenses from './components/RecurringExpenses';
+import InsightsPanel from './components/InsightsPanel';
 import TransactionsTable from './components/TransactionsTable';
 import './index.css';
 
@@ -18,6 +21,14 @@ export default function App() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <SpendingPieChart />
           <SpendingLineChart />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <BudgetTracker />
+          <div className="grid grid-cols-1 gap-6">
+            <RecurringExpenses />
+            <InsightsPanel />
+          </div>
         </div>
 
         <TransactionsTable />
